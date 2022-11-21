@@ -1,9 +1,9 @@
 """
-AML-1214 Project - Fall 2022
+DEVICE MANAGEMENT SYSTEM (AML-1214 Project - Fall 2022)
 Submitted by:
 - Auradee Castro
-- Bhumika Rajendra Babu
 - Olivia Deguit
+- Bhumika Rajendra Babu
 """
 import pickle
 from enum import Enum
