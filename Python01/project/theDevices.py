@@ -51,9 +51,9 @@ def startDeviceManagement():
             elif command == Command.Delete.value:
                 deleteDevice(device_list)
             elif command == Command.Update.value:
-                updateDevice()
+                updateDevice(device_list)
             elif command == Command.Search.value:
-                searchDevice()
+                searchDevice(device_list)
 
             is_continue = ""
             while is_continue.lower() != "n" and is_continue.lower() != "y":
@@ -110,18 +110,18 @@ def deleteDevice(device_list):
                 print(deleted_device[0], deleted_device[1], deleted_device[2], "is deleted")
             break
     else:
-        print("Device code", del_device, "not found")
+        print("Device code", del_device, "is not found")
 
 
 # the update function updates the name of a device when the user enters the device code,
 # then the updated list of devices is written back to the file
-def updateDevice():
+def updateDevice(device_list):
     print("code for update device")
 
 
 # the search function allows the user to enter a keyword
 # if found the devices that contain the keyword will be returned
-def searchDevice():
+def searchDevice(device_list):
     print("code for search device")
 
 
