@@ -1,12 +1,28 @@
 import pickle
 
 
-def createAccount():
+def main():
+    print("1. View Accounts")
+    print("2. Add Account")
 
-    accounts = readAccount()
+    while True:
+        command = input("What do you want to do? ")
 
-    print(accounts)
+        accounts = readAccount()
+        if command == "1":
+            viewAccounts(accounts)
+        elif command == "2":
+            createAccount(accounts)
+        else:
+            break
 
+
+def viewAccounts(accounts):
+    for account in accounts:
+        print(account[0], account[1])
+
+
+def createAccount(accounts):
     name = input("Enter username: ")
     password = input("Enter password: ")
 
@@ -32,4 +48,4 @@ def readAccount():
     return accounts
 
 
-createAccount()
+main()
