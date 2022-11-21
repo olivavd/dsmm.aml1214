@@ -1,0 +1,6 @@
+1009234bx ThinkSystem SN550
+4500987zx ThinkSystem SN850
+2345003cr PowerEdge R240
+4530978km PowerEdge T640
+8345609sa HPE ProLiant DL385
+7776501qa HPE ProLiant ML350
