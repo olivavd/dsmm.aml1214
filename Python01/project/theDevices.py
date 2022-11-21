@@ -8,7 +8,8 @@ Submitted by:
 import pickle
 from enum import Enum
 
-device_filename = "devices.txt"
+devices_filename = "devices.txt"
+accounts_filename = "accounts"
 
 
 class Command(Enum):
@@ -20,12 +21,51 @@ class Command(Enum):
     Exit = "6"
 
 
-def startDeviceManagement():
-    loginAccount()
+def main():
+    is_login_account = loginAccount()
 
-    print("+++++++++++++++++++++++++++++++++++++++++++")
-    print("+ Welcome to the Device Management System +")
-    print("+++++++++++++++++++++++++++++++++++++++++++")
+    if is_login_account:
+        startDeviceManagement()
+    else:
+        print("Exiting application...")
+
+
+def loginAccount():
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+             Login to Your Account             +")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    account_list = readFile(accounts_filename)
+
+    login_ctr = 0
+    is_login_account = False
+    while login_ctr != 3:
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+
+        for account in account_list:
+            if username in account and password in account:
+                is_login_account = True
+                break
+        else:
+            print("Invalid username and/or password\n")
+
+        if is_login_account:
+            print("Log In Successful\n")
+            break
+
+        login_ctr += 1
+    else:
+        print("You have exceeded three attempts to login")
+
+    return is_login_account
+
+
+def startDeviceManagement():
+
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+    Welcome to the Device Management System    +")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("1. View all device")
     print("2. Add a device")
     print("3. Delete a device")
@@ -42,7 +82,7 @@ def startDeviceManagement():
         elif command == Command.Exit.value:
             print("Thank you for using the application!")
         else:
-            device_list = readFile(device_filename)
+            device_list = readFile(devices_filename)
 
             if command == Command.View.value:
                 viewDeviceList(device_list)
@@ -66,15 +106,6 @@ def startDeviceManagement():
                     break
 
 
-# login function with username and password
-# users have been pre-registered with their usernames and password, and saved in a file
-# user has three attempts to try after which the app exits
-def loginAccount():
-    accounts_filename = "accounts"  # use pickle mode
-    print("code for login")
-
-
-# the view function lists all devices
 def viewDeviceList(device_list):
     if len(device_list) > 0:
         for device in device_list:
@@ -83,15 +114,13 @@ def viewDeviceList(device_list):
         print("No device found")
 
 
-# the add function adds a device when the user enters the name of the device,
-# then the updated list of devices is written back to a file
 def addDevice(device_list):
     add_device = input("Add device, format [code] [device name]: ").split(" ", 1)
 
     if len(add_device) > 1:
         device_list.append(add_device)
 
-        is_device_added = writeFile(device_list, device_filename)
+        is_device_added = writeFile(device_list, devices_filename)
         if is_device_added:
             print(add_device[0], add_device[1], "is added")
     else:
@@ -100,16 +129,14 @@ def addDevice(device_list):
     # pending: validation of the code (for confirmation)
 
 
-# the delete function deletes a device when the user enters the device code,
-# then the updated list of devices is written back to the file
 def deleteDevice(device_list):
     device_code = input("Enter code to delete device: ")
 
     for idx, device in enumerate(device_list):
         if device_code in device:
             deleted_device = device_list.pop(idx)
-            is_device_deleted = writeFile(device_list, device_filename)
 
+            is_device_deleted = writeFile(device_list, devices_filename)
             if is_device_deleted:
                 print(deleted_device[0], deleted_device[1], "is deleted")
             break
@@ -117,8 +144,6 @@ def deleteDevice(device_list):
         print("Device code", device_code, "is not found")
 
 
-# the update function updates the name of a device when the user enters the device code,
-# then the updated list of devices is written back to the file
 def updateDevice(device_list):
     device_code = input("Enter code to update device: ")
 
@@ -127,7 +152,7 @@ def updateDevice(device_list):
             device_name = input("New device name: ")
             device_list[idx][1] = device_name
 
-            is_device_updated = writeFile(device_list, device_filename)
+            is_device_updated = writeFile(device_list, devices_filename)
             if is_device_updated:
                 print(device_list[idx][0], "is updated with device name", device_list[idx][1])
             break
@@ -135,8 +160,6 @@ def updateDevice(device_list):
         print("Device code", device_code, "is not found")
 
 
-# the search function allows the user to enter a keyword
-# if found the devices that contain the keyword will be returned
 def searchDevice(device_list):
     device_keyword = input("Enter keyword: ")
 
@@ -151,7 +174,7 @@ def searchDevice(device_list):
 
 
 def validateDeviceCode():
-    print("code validation")
+    print("device code validation")
 
 
 def readFile(filename):
@@ -173,7 +196,8 @@ def writeFile(content_list, filename):
     except Exception as err:
         print("Unexpected error: ", err)
         return False
+
     return True
 
 
-startDeviceManagement()
+main()
