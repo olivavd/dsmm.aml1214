@@ -8,7 +8,7 @@ Submitted by:
 import pickle
 from enum import Enum
 
-devices_filename = "devices.txt"
+devices_filename = "devic8es.txt"
 accounts_filename = "accounts"
 
 
@@ -35,28 +35,31 @@ def loginAccount():
     print("+             Login to Your Account             +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
 
+    login_attempt = 0
+    is_login_account = False
+
     account_list = readFile(accounts_filename)
 
-    login_ctr = 0
-    is_login_account = False
-    while login_ctr != 3:
-        username = input("Enter username: ")
-        password = input("Enter password: ")
+    if account_list is not None:
 
-        for account in account_list:
-            if username in account and password in account:
-                is_login_account = True
+        while login_attempt != 3:
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+
+            for account in account_list:
+                if username in account and password in account:
+                    is_login_account = True
+                    break
+            else:
+                print("Invalid username and/or password\n")
+
+            if is_login_account:
+                print("Log In Successful\n")
                 break
+
+            login_attempt += 1
         else:
-            print("Invalid username and/or password\n")
-
-        if is_login_account:
-            print("Log In Successful\n")
-            break
-
-        login_ctr += 1
-    else:
-        print("You have exceeded three attempts to login")
+            print("You have exceeded three login attempts")
 
     return is_login_account
 
@@ -83,6 +86,9 @@ def startDeviceManagement():
             print("Thank you for using the application!")
         else:
             device_list = readFile(devices_filename)
+            if device_list is None:
+                print("Exiting application...")
+                break
 
             if command == Command.View.value:
                 viewDeviceList(device_list)
@@ -181,11 +187,10 @@ def readFile(filename):
     try:
         with open(filename, "rb") as file:
             content_list = pickle.load(file)
-    except EOFError:
-        content_list = []
-    except FileNotFoundError:
-        print("File not found:", filename)
+    except Exception as err:
+        print("Unexpected error:", err)
         content_list = None
+
     return content_list
 
 
@@ -194,7 +199,7 @@ def writeFile(content_list, filename):
         with open(filename, "wb") as file:
             pickle.dump(content_list, file)
     except Exception as err:
-        print("Unexpected error: ", err)
+        print("Unexpected error:", err)
         return False
 
     return True
