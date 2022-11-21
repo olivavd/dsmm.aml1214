@@ -8,7 +8,7 @@ Submitted by:
 import pickle
 from enum import Enum
 
-devices_filename = "devic8es.txt"
+devices_filename = "devices.txt"
 accounts_filename = "accounts"
 
 
