@@ -78,7 +78,7 @@ def loginAccount():
 def viewDeviceList(device_list):
     if len(device_list) > 0:
         for device in device_list:
-            print(device[0], device[1], device[2])
+            print(device[0], device[1])
     else:
         print("No device found")
 
@@ -86,12 +86,16 @@ def viewDeviceList(device_list):
 # the add function adds a device when the user enters the name of the device,
 # then the updated list of devices is written back to a file
 def addDevice(device_list):
-    add_device = input("Add device [code brand model]: ").split()
-    device_list.append(add_device)
+    add_device = input("Add device, format [code] [device name]: ").split(" ", 1)
 
-    is_device_added = writeFile(device_list, device_filename)
-    if is_device_added:
-        print(add_device[0], add_device[1], add_device[2], "is added")
+    if len(add_device) > 1:
+        device_list.append(add_device)
+
+        is_device_added = writeFile(device_list, device_filename)
+        if is_device_added:
+            print(add_device[0], add_device[1], "is added")
+    else:
+        print("Invalid input. Format: [code] [device name]")
 
     # pending: validation of the code (for confirmation)
 
@@ -99,30 +103,51 @@ def addDevice(device_list):
 # the delete function deletes a device when the user enters the device code,
 # then the updated list of devices is written back to the file
 def deleteDevice(device_list):
-    del_device = input("Delete device [code]: ")
+    device_code = input("Enter code to delete device: ")
 
     for idx, device in enumerate(device_list):
-        if del_device in device:
+        if device_code in device:
             deleted_device = device_list.pop(idx)
             is_device_deleted = writeFile(device_list, device_filename)
 
             if is_device_deleted:
-                print(deleted_device[0], deleted_device[1], deleted_device[2], "is deleted")
+                print(deleted_device[0], deleted_device[1], "is deleted")
             break
     else:
-        print("Device code", del_device, "is not found")
+        print("Device code", device_code, "is not found")
 
 
 # the update function updates the name of a device when the user enters the device code,
 # then the updated list of devices is written back to the file
 def updateDevice(device_list):
-    print("code for update device")
+    device_code = input("Enter code to update device: ")
+
+    for idx, device in enumerate(device_list):
+        if device_code in device:
+            device_name = input("New device name: ")
+            device_list[idx][1] = device_name
+
+            is_device_updated = writeFile(device_list, device_filename)
+            if is_device_updated:
+                print(device_list[idx][0], "is updated with device name", device_list[idx][1])
+            break
+    else:
+        print("Device code", device_code, "is not found")
 
 
 # the search function allows the user to enter a keyword
 # if found the devices that contain the keyword will be returned
 def searchDevice(device_list):
-    print("code for search device")
+    device_keyword = input("Enter keyword: ")
+
+    keyword_ctr = 0
+    for idx, device in enumerate(device_list):
+        if device_keyword.lower() in "".join(device).lower():
+            print(device_list[idx][0], device_list[idx][1])
+            keyword_ctr += 1
+
+    if keyword_ctr == 0:
+        print("Keyword", device_keyword, "is not found")
 
 
 def validateDeviceCode():
