@@ -7,6 +7,7 @@ Submitted by:
 """
 import pickle
 from enum import Enum
+import os
 
 devices_filename = "devices.txt"
 accounts_filename = "accounts"
@@ -40,6 +41,7 @@ def loginAccount():
 
     account_list = readFile(accounts_filename)
 
+    # If there are no errors reading the account file
     if account_list is not None:
 
         while login_attempt != 3:
@@ -47,7 +49,7 @@ def loginAccount():
             password = input("Enter password: ")
 
             for account in account_list:
-                if username in account and password in account:
+                if username in account[0] and password in account[1]:
                     is_login_account = True
                     break
             else:
@@ -69,16 +71,18 @@ def startDeviceManagement():
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+    Welcome to the Device Management System    +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("1. View all device")
-    print("2. Add a device")
-    print("3. Delete a device")
-    print("4. Update a device")
-    print("5. Search for a device")
-    print("6. Exit the program")
 
     command = None
     while command != Command.Exit.value:
-        command = input("\nSelect one option from the list (1, 2, 3, 4 or 5): ")
+        print()
+        print("1. View all device")
+        print("2. Add a device")
+        print("3. Delete a device")
+        print("4. Update a device")
+        print("5. Search for a device")
+        print("6. Exit the program")
+
+        command = input("\nSelect one option from the list (1, 2, 3, 4, 5 or 6): ")
 
         if command not in [item.value for item in Command]:
             print("Invalid selection. Try again.")
@@ -86,6 +90,8 @@ def startDeviceManagement():
             print("Thank you for using the application!")
         else:
             device_list = readFile(devices_filename)
+
+            # If there is an error reading the device file
             if device_list is None:
                 print("Exiting application...")
                 break
@@ -121,7 +127,8 @@ def viewDeviceList(device_list):
 
 
 def addDevice(device_list):
-    add_device = input("Add device, format [code] [device name]: ").split(" ", 1)
+    print("Note: Device code should consist of 7 numbers and 2 characters")
+    add_device = input("Add device, format [device code] [device name]: ").split(" ", 1)
 
     if len(add_device) > 1:
         device_list.append(add_device)
@@ -132,14 +139,12 @@ def addDevice(device_list):
     else:
         print("Invalid input. Format: [code] [device name]")
 
-    # pending: validation of the code (for confirmation)
-
 
 def deleteDevice(device_list):
     device_code = input("Enter code to delete device: ")
 
     for idx, device in enumerate(device_list):
-        if device_code in device:
+        if device_code in device[0]:
             deleted_device = device_list.pop(idx)
 
             is_device_deleted = writeFile(device_list, devices_filename)
@@ -154,13 +159,14 @@ def updateDevice(device_list):
     device_code = input("Enter code to update device: ")
 
     for idx, device in enumerate(device_list):
-        if device_code in device:
+        if device_code in device[0]:
             device_name = input("New device name: ")
+            old_device_name = device_list[idx][1]
             device_list[idx][1] = device_name
 
             is_device_updated = writeFile(device_list, devices_filename)
             if is_device_updated:
-                print(device_list[idx][0], "is updated with device name", device_list[idx][1])
+                print(device_list[idx][0], "is updated from", "'"+old_device_name+"'", "to new device name", "'"+device_list[idx][1]+"'")
             break
     else:
         print("Device code", device_code, "is not found")
@@ -179,14 +185,12 @@ def searchDevice(device_list):
         print("Keyword", device_keyword, "is not found")
 
 
-def validateDeviceCode():
-    print("device code validation")
-
-
 def readFile(filename):
     try:
         with open(filename, "rb") as file:
             content_list = pickle.load(file)
+    except EOFError:
+        content_list = []
     except Exception as err:
         print("Unexpected error:", err)
         content_list = None
