@@ -164,7 +164,7 @@ def deleteDevice(device_list):
         if len(device_name_list) == 1:
             device_num_list = "1"   # only 1 record found
         else:
-            device_num_list = input("Enter number to delete device (comma separated): ").split(",")
+            device_num_list = input("Enter number to delete device name (comma separated): ").split(",")
 
         del_ctr = 0
         for device_num in device_num_list:
@@ -197,7 +197,7 @@ def updateDevice(device_list):
         if len(device_name_list) == 1:
             device_num_list = "1"   # only 1 record found
         else:
-            device_num_list = input("Enter number to update device (comma separated): ").split(",")
+            device_num_list = input("Enter number to update device name (comma separated): ").split(",")
 
         for device_num in device_num_list:
             device_num_ctr = 0
