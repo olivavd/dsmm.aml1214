@@ -6,6 +6,7 @@ Submitted by:
 - Bhumika Rajendra Babu
 """
 import pickle
+import re
 from enum import Enum
 import os
 
@@ -131,11 +132,14 @@ def addDevice(device_list):
     add_device = input("Add device, format [device code] [device name]: ").split(" ", 1)
 
     if len(add_device) > 1:
-        device_list.append(add_device)
+        if validateDeviceCode(add_device[0]):
+            device_list.append(add_device)
 
-        is_device_added = writeFile(device_list, devices_filename)
-        if is_device_added:
-            print(add_device[0], add_device[1], "is added")
+            is_device_added = writeFile(device_list, devices_filename)
+            if is_device_added:
+                print(add_device[0], add_device[1], "is added")
+        else:
+            print("Invalid device code pattern")
     else:
         print("Invalid input. Format: [code] [device name]")
 
@@ -143,33 +147,67 @@ def addDevice(device_list):
 def deleteDevice(device_list):
     device_code = input("Enter code to delete device: ")
 
-    for idx, device in enumerate(device_list):
-        if device_code in device[0]:
-            deleted_device = device_list.pop(idx)
+    device_name_list = getDeviceName(device_code, device_list)
 
-            is_device_deleted = writeFile(device_list, devices_filename)
-            if is_device_deleted:
-                print(deleted_device[0], deleted_device[1], "is deleted")
-            break
-    else:
-        print("Device code", device_code, "is not found")
+    if len(device_name_list) > 0:
+
+        if len(device_name_list) == 1:
+            device_num_list = "1"   # only 1 record found
+        else:
+            device_num_list = input("Enter number to delete device (comma separated): ").split(",")
+
+        del_ctr = 0
+        for device_num in device_num_list:
+            device_num_ctr = 0
+
+            for idx, device_name in enumerate(device_name_list):
+                if device_num == str(device_name[0]):
+                    orig_device_idx = device_name_list[idx][1] - del_ctr
+                    deleted_device = device_list.pop(orig_device_idx)
+
+                    device_num_ctr += 1
+                    del_ctr += 1
+
+                    is_device_deleted = writeFile(device_list, devices_filename)
+                    if is_device_deleted:
+                        print(deleted_device[0], deleted_device[1], "is deleted")
+                    break
+
+            if device_num_ctr == 0:
+                print("Device name number", device_num, "is not valid")
 
 
 def updateDevice(device_list):
     device_code = input("Enter code to update device: ")
 
-    for idx, device in enumerate(device_list):
-        if device_code in device[0]:
-            device_name = input("New device name: ")
-            old_device_name = device_list[idx][1]
-            device_list[idx][1] = device_name
+    device_name_list = getDeviceName(device_code, device_list)
 
-            is_device_updated = writeFile(device_list, devices_filename)
-            if is_device_updated:
-                print(device_list[idx][0], "is updated from", "'"+old_device_name+"'", "to new device name", "'"+device_list[idx][1]+"'")
-            break
-    else:
-        print("Device code", device_code, "is not found")
+    if len(device_name_list) > 0:
+
+        if len(device_name_list) == 1:
+            device_num_list = "1"   # only 1 record found
+        else:
+            device_num_list = input("Enter number to update device (comma separated): ").split(",")
+
+        for device_num in device_num_list:
+            device_num_ctr = 0
+
+            for idx, device_name in enumerate(device_name_list):
+                if device_num == str(device_name[0]):
+                    print("Old device name:", device_name_list[idx][2])
+                    new_device_name = input("New device name: ")
+
+                    orig_device_idx = device_name_list[idx][1]
+                    device_list[orig_device_idx][1] = new_device_name
+                    device_num_ctr += 1
+
+                    is_device_updated = writeFile(device_list, devices_filename)
+                    if is_device_updated:
+                        print("Device name is updated successfully")
+                    break
+
+            if device_num_ctr == 0:
+                print("Device name number", device_num, "is not valid")
 
 
 def searchDevice(device_list):
@@ -183,6 +221,36 @@ def searchDevice(device_list):
 
     if keyword_ctr == 0:
         print("Keyword", device_keyword, "is not found")
+
+
+def getDeviceName(device_code, device_list):
+
+    device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list) if device_list[idx][0] == device_code]
+
+    new_device_name_list = []
+    device_ctr = 1
+
+    if len(device_name_list) > 0:
+
+        if len(device_name_list) > 1:
+            print("Device names using code", device_code)
+
+        for idx, device_name in enumerate(device_name_list):
+            if len(device_name_list) > 1:
+                print(str(device_ctr)+".", device_name[1])
+            # list contains: [0] temp ID [1] index from original list [2] device name
+            new_device_name_list.append([device_ctr, device_name[0], device_name[1]])
+            device_ctr += 1
+    else:
+        print("Device code", device_code, "is not found")
+
+    return new_device_name_list
+
+
+def validateDeviceCode(device_code):
+    device_code_pattern = re.compile(r"\d{7}\w{2}")
+    result = device_code_pattern.fullmatch(device_code)
+    return True if result is not None else False
 
 
 def readFile(filename):
