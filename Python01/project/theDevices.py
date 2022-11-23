@@ -110,9 +110,9 @@ def startDeviceManagement():
 
             is_continue = ""
             while is_continue.lower() != "n" and is_continue.lower() != "y":
-                is_continue = input("\nDo you want to continue? (y/n): ")
+                is_continue = input("\nDo you want to continue? [y/n]: ")
                 if is_continue.lower() != "n" and is_continue.lower() != "y":
-                    print("Invalid selection. Try again.")
+                    print("Invalid input. Type 'y' for yes or 'n' for no.")
             else:
                 if is_continue.lower() == "n":
                     print("Thank you for using the application!")
@@ -131,17 +131,27 @@ def addDevice(device_list):
     print("Note: Device code should consist of 7 numbers and 2 characters")
     add_device = input("Add device, format [device code] [device name]: ").split(" ", 1)
 
-    if len(add_device) > 1:
-        if validateDeviceCode(add_device[0]):
-            device_list.append(add_device)
+    if len(add_device) <= 1:
+        print("Invalid input. Format: [code] [device name]")
+    elif not isValidDeviceCode(add_device[0]):
+        print("Invalid device code pattern")
+    else:
+        is_continue = ""
+        if isDuplicateDevice(add_device[0], add_device[1], device_list):
+            while is_continue.lower() != "n" and is_continue.lower() != "y":
+                is_continue = input("Record already exists. Do you want to continue? [y/n]: ")
+                if is_continue.lower() != "n" and is_continue.lower() != "y":
+                    print("Invalid input. Type 'y' for yes or 'n' for no.")
+        else:
+            is_continue = "y"
 
+        if is_continue.lower() == "y":
+            device_list.append(add_device)
             is_device_added = writeFile(device_list, devices_filename)
             if is_device_added:
                 print(add_device[0], add_device[1], "is added")
         else:
-            print("Invalid device code pattern")
-    else:
-        print("Invalid input. Format: [code] [device name]")
+            print(add_device[0], add_device[1], "is not added")
 
 
 def deleteDevice(device_list):
@@ -174,7 +184,7 @@ def deleteDevice(device_list):
                     break
 
             if device_num_ctr == 0:
-                print("Device name number", device_num, "is not valid")
+                print("Invalid device name number", device_num, ". Skipped..")
 
 
 def updateDevice(device_list):
@@ -207,7 +217,7 @@ def updateDevice(device_list):
                     break
 
             if device_num_ctr == 0:
-                print("Device name number", device_num, "is not valid")
+                print("Invalid device name number", device_num, ". Skipped..")
 
 
 def searchDevice(device_list):
@@ -224,14 +234,14 @@ def searchDevice(device_list):
 
 
 def getDeviceName(device_code, device_list):
-
-    device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list) if device_list[idx][0] == device_code]
-
     new_device_name_list = []
     device_ctr = 1
 
-    if len(device_name_list) > 0:
+    device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list) if device_list[idx][0] == device_code]
 
+    if len(device_name_list) == 0:
+        print("Device code", device_code, "is not found")
+    else:
         if len(device_name_list) > 1:
             print("Device names using code", device_code)
 
@@ -241,16 +251,23 @@ def getDeviceName(device_code, device_list):
             # list contains: [0] temp ID [1] index from original list [2] device name
             new_device_name_list.append([device_ctr, device_name[0], device_name[1]])
             device_ctr += 1
-    else:
-        print("Device code", device_code, "is not found")
 
     return new_device_name_list
 
 
-def validateDeviceCode(device_code):
+def isValidDeviceCode(device_code):
     device_code_pattern = re.compile(r"\d{7}\w{2}")
     result = device_code_pattern.fullmatch(device_code)
     return True if result is not None else False
+
+
+def isDuplicateDevice(device_code, device_name, device_list):
+    has_duplicate = False
+    for device in device_list:
+        if device_code in device[0] and device_name in device[1]:
+            has_duplicate = True
+            break
+    return has_duplicate
 
 
 def readFile(filename):
