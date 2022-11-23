@@ -23,7 +23,8 @@ class Command(Enum):
     Exit = "6"
 
 
-def main():
+def main() -> None:
+    """ The function that starts the applications """
     is_login_account = loginAccount()
 
     if is_login_account:
@@ -32,7 +33,8 @@ def main():
         print("Exiting application...")
 
 
-def loginAccount():
+def loginAccount() -> bool:
+    """ The function that prompts authorized users to log into the application """
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+             Login to Your Account             +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -67,8 +69,8 @@ def loginAccount():
     return is_login_account
 
 
-def startDeviceManagement():
-
+def startDeviceManagement() -> None:
+    """ The function that displays the application menu """
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+    Welcome to the Device Management System    +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -99,14 +101,29 @@ def startDeviceManagement():
 
             if command == Command.View.value:
                 viewDeviceList(device_list)
+
             elif command == Command.Add.value:
-                addDevice(device_list)
+                print("Note: Device code should consist of 7 numbers and 2 characters")
+                device_details = input("Add device, format [device code] [device name]: ").split(" ", 1)
+
+                if len(device_details) <= 1:
+                    print("Invalid input. Format: [code] [device name]")
+                elif not isValidDeviceCode(device_details[0]):
+                    print("Invalid device code pattern")
+                else:
+                    addDevice(device_details, device_list)
+
             elif command == Command.Delete.value:
-                deleteDevice(device_list)
+                device_code = input("Enter code to delete device: ")
+                deleteDevice(device_code, device_list)
+
             elif command == Command.Update.value:
-                updateDevice(device_list)
+                device_code = input("Enter code to update device: ")
+                updateDevice(device_code, device_list)
+
             elif command == Command.Search.value:
-                searchDevice(device_list)
+                keyword = input("Enter keyword: ")
+                searchDevice(keyword, device_list)
 
             is_continue = ""
             while is_continue.lower() != "n" and is_continue.lower() != "y":
@@ -119,7 +136,8 @@ def startDeviceManagement():
                     break
 
 
-def viewDeviceList(device_list):
+def viewDeviceList(device_list) -> None:
+    """ The function that displays device records """
     if len(device_list) > 0:
         for device in device_list:
             print(device[0], device[1])
@@ -127,40 +145,33 @@ def viewDeviceList(device_list):
         print("No device found")
 
 
-def addDevice(device_list):
-    print("Note: Device code should consist of 7 numbers and 2 characters")
-    add_device = input("Add device, format [device code] [device name]: ").split(" ", 1)
-
-    if len(add_device) <= 1:
-        print("Invalid input. Format: [code] [device name]")
-    elif not isValidDeviceCode(add_device[0]):
-        print("Invalid device code pattern")
+def addDevice(device_details, device_list) -> None:
+    """ The function that adds a device record """
+    is_continue = ""
+    if isDuplicateDevice(device_details[0], device_details[1], device_list):
+        while is_continue.lower() != "n" and is_continue.lower() != "y":
+            is_continue = input("Record already exists. Do you want to continue? [y/n]: ")
+            if is_continue.lower() != "n" and is_continue.lower() != "y":
+                print("Invalid input. Type 'y' for yes or 'n' for no.")
     else:
-        is_continue = ""
-        if isDuplicateDevice(add_device[0], add_device[1], device_list):
-            while is_continue.lower() != "n" and is_continue.lower() != "y":
-                is_continue = input("Record already exists. Do you want to continue? [y/n]: ")
-                if is_continue.lower() != "n" and is_continue.lower() != "y":
-                    print("Invalid input. Type 'y' for yes or 'n' for no.")
-        else:
-            is_continue = "y"
+        is_continue = "y"
 
-        if is_continue.lower() == "y":
-            device_list.append(add_device)
-            is_device_added = writeFile(device_list, devices_filename)
-            if is_device_added:
-                print(add_device[0], add_device[1], "is added")
-        else:
-            print(add_device[0], add_device[1], "is not added")
+    if is_continue.lower() == "y":
+        device_list.append(device_details)
+        is_device_added = writeFile(device_list, devices_filename)
+        if is_device_added:
+            print(device_details[0], device_details[1], "is added")
+    else:
+        print(device_details[0], device_details[1], "is not added")
 
 
-def deleteDevice(device_list):
-    device_code = input("Enter code to delete device: ")
-
+def deleteDevice(device_code, device_list) -> None:
+    """ The function that deletes device name(s) of the specified device code """
     device_name_list = getDeviceName(device_code, device_list)
 
-    if len(device_name_list) > 0:
-
+    if len(device_name_list) == 0:
+        print("Device code", device_code, "is not found")
+    else:
         if len(device_name_list) == 1:
             device_num_list = "1"   # only 1 record found
         else:
@@ -187,13 +198,13 @@ def deleteDevice(device_list):
                 print("Invalid device name number", device_num, ". Skipped..")
 
 
-def updateDevice(device_list):
-    device_code = input("Enter code to update device: ")
-
+def updateDevice(device_code, device_list) -> None:
+    """ The function that updates device name(s) of the specified device code """
     device_name_list = getDeviceName(device_code, device_list)
 
-    if len(device_name_list) > 0:
-
+    if len(device_name_list) == 0:
+        print("Device code", device_code, "is not found")
+    else:
         if len(device_name_list) == 1:
             device_num_list = "1"   # only 1 record found
         else:
@@ -220,48 +231,47 @@ def updateDevice(device_list):
                 print("Invalid device name number", device_num, ". Skipped..")
 
 
-def searchDevice(device_list):
-    device_keyword = input("Enter keyword: ")
-
+def searchDevice(keyword, device_list) -> None:
+    """ The function that searches for all devices that matches with the keyword """
     keyword_ctr = 0
     for idx, device in enumerate(device_list):
-        if device_keyword.lower() in "".join(device).lower():
+        if keyword.lower() in "".join(device).lower():
             print(device_list[idx][0], device_list[idx][1])
             keyword_ctr += 1
 
     if keyword_ctr == 0:
-        print("Keyword", device_keyword, "is not found")
+        print("Keyword", keyword, "is not found")
 
 
-def getDeviceName(device_code, device_list):
+def getDeviceName(device_code, device_list) -> list:
+    """ The function that gets all device names of the specified device code """
     new_device_name_list = []
     device_ctr = 1
 
     device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list) if device_list[idx][0] == device_code]
 
-    if len(device_name_list) == 0:
-        print("Device code", device_code, "is not found")
-    else:
-        if len(device_name_list) > 1:
-            print("Device names using code", device_code)
+    if len(device_name_list) > 1:
+        print("Device names using code", device_code)
 
-        for idx, device_name in enumerate(device_name_list):
-            if len(device_name_list) > 1:
-                print(str(device_ctr)+".", device_name[1])
-            # list contains: [0] temp ID [1] index from original list [2] device name
-            new_device_name_list.append([device_ctr, device_name[0], device_name[1]])
-            device_ctr += 1
+    for idx, device_name in enumerate(device_name_list):
+        if len(device_name_list) > 1:
+            print(str(device_ctr)+".", device_name[1])
+        # list contains: [0] temp ID [1] index from original list [2] device name
+        new_device_name_list.append([device_ctr, device_name[0], device_name[1]])
+        device_ctr += 1
 
     return new_device_name_list
 
 
-def isValidDeviceCode(device_code):
+def isValidDeviceCode(device_code) -> bool:
+    """ The function that checks if a device code matches with the pattern """
     device_code_pattern = re.compile(r"\d{7}\w{2}")
     result = device_code_pattern.fullmatch(device_code)
     return True if result is not None else False
 
 
-def isDuplicateDevice(device_code, device_name, device_list):
+def isDuplicateDevice(device_code, device_name, device_list) -> bool:
+    """ The function that checks if a device record already exists """
     has_duplicate = False
     for device in device_list:
         if device_code in device[0] and device_name in device[1]:
@@ -270,7 +280,8 @@ def isDuplicateDevice(device_code, device_name, device_list):
     return has_duplicate
 
 
-def readFile(filename):
+def readFile(filename) -> list:
+    """ The function that reads content from a file """
     try:
         with open(filename, "rb") as file:
             content_list = pickle.load(file)
@@ -283,7 +294,8 @@ def readFile(filename):
     return content_list
 
 
-def writeFile(content_list, filename):
+def writeFile(content_list, filename) -> bool:
+    """ The function that writes content to a file """
     try:
         with open(filename, "wb") as file:
             pickle.dump(content_list, file)
