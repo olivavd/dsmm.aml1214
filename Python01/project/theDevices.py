@@ -56,7 +56,7 @@ def loginAccount():
             password = input("Enter password: ")
 
             for account in account_list:
-                if username in account[0] and password in account[1]:
+                if username == account[0] and password == account[1]:
                     is_login_account = True
                     break
             else:
@@ -296,7 +296,7 @@ def isDuplicateDevice(device_code, device_name, device_list):
     """
     has_duplicate = False
     for device in device_list:
-        if device_code in device[0] and device_name in device[1]:
+        if device_code == device[0] and device_name == device[1]:
             has_duplicate = True
             break
     return has_duplicate
