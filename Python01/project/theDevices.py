@@ -23,7 +23,7 @@ class Command(Enum):
     Exit = "6"
 
 
-def main() -> None:
+def main():
     """
     The function that starts the applications
     """
@@ -35,7 +35,7 @@ def main() -> None:
         print("Exiting application...")
 
 
-def loginAccount() -> bool:
+def loginAccount():
     """
     The function that prompts authorized users to log into the application
     """
@@ -73,7 +73,7 @@ def loginAccount() -> bool:
     return is_login_account
 
 
-def startDeviceManagement() -> None:
+def startDeviceManagement():
     """
     The function that displays the application menu
     """
@@ -142,7 +142,7 @@ def startDeviceManagement() -> None:
                     break
 
 
-def viewDeviceList(device_list) -> None:
+def viewDeviceList(device_list):
     """
     The function that displays device records
     """
@@ -153,7 +153,7 @@ def viewDeviceList(device_list) -> None:
         print("No device found")
 
 
-def addDevice(device_details, device_list) -> None:
+def addDevice(device_details, device_list):
     """
     The function that adds a device record
     """
@@ -175,7 +175,7 @@ def addDevice(device_details, device_list) -> None:
         print(device_details[0], device_details[1], "is not added")
 
 
-def deleteDevice(device_code, device_list) -> None:
+def deleteDevice(device_code, device_list):
     """
     The function that deletes device name(s) of the specified device code
     """
@@ -210,7 +210,7 @@ def deleteDevice(device_code, device_list) -> None:
                 print("Invalid device name number", device_num, ". Skipped..")
 
 
-def updateDevice(device_code, device_list) -> None:
+def updateDevice(device_code, device_list):
     """
     The function that updates device name(s) of the specified device code
     """
@@ -245,7 +245,7 @@ def updateDevice(device_code, device_list) -> None:
                 print("Invalid device name number", device_num, ". Skipped..")
 
 
-def searchDevice(keyword, device_list) -> None:
+def searchDevice(keyword, device_list):
     """
     The function that searches for all devices that matches with the keyword
     """
@@ -259,7 +259,7 @@ def searchDevice(keyword, device_list) -> None:
         print("Keyword", keyword, "is not found")
 
 
-def getDeviceName(device_code, device_list) -> list:
+def getDeviceName(device_code, device_list):
     """
     The function that gets all device names of the specified device code
     """
@@ -281,7 +281,7 @@ def getDeviceName(device_code, device_list) -> list:
     return new_device_name_list
 
 
-def isValidDeviceCode(device_code) -> bool:
+def isValidDeviceCode(device_code):
     """
     The function that checks if a device code matches with the pattern
     """
@@ -290,7 +290,7 @@ def isValidDeviceCode(device_code) -> bool:
     return True if result is not None else False
 
 
-def isDuplicateDevice(device_code, device_name, device_list) -> bool:
+def isDuplicateDevice(device_code, device_name, device_list):
     """
     The function that checks if a device record already exists
     """
@@ -302,7 +302,7 @@ def isDuplicateDevice(device_code, device_name, device_list) -> bool:
     return has_duplicate
 
 
-def readFile(filename) -> list:
+def readFile(filename):
     """
     The function that reads content from a file
     """
@@ -318,7 +318,7 @@ def readFile(filename) -> list:
     return content_list
 
 
-def writeFile(content_list, filename) -> bool:
+def writeFile(content_list, filename):
     """
     The function that writes content to a file
     """
