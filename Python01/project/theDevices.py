@@ -24,7 +24,9 @@ class Command(Enum):
 
 
 def main() -> None:
-    """ The function that starts the applications """
+    """
+    The function that starts the applications
+    """
     is_login_account = loginAccount()
 
     if is_login_account:
@@ -34,7 +36,9 @@ def main() -> None:
 
 
 def loginAccount() -> bool:
-    """ The function that prompts authorized users to log into the application """
+    """
+    The function that prompts authorized users to log into the application
+    """
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+             Login to Your Account             +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -70,7 +74,9 @@ def loginAccount() -> bool:
 
 
 def startDeviceManagement() -> None:
-    """ The function that displays the application menu """
+    """
+    The function that displays the application menu
+    """
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+    Welcome to the Device Management System    +")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -137,7 +143,9 @@ def startDeviceManagement() -> None:
 
 
 def viewDeviceList(device_list) -> None:
-    """ The function that displays device records """
+    """
+    The function that displays device records
+    """
     if len(device_list) > 0:
         for device in device_list:
             print(device[0], device[1])
@@ -146,7 +154,9 @@ def viewDeviceList(device_list) -> None:
 
 
 def addDevice(device_details, device_list) -> None:
-    """ The function that adds a device record """
+    """
+    The function that adds a device record
+    """
     is_continue = ""
     if isDuplicateDevice(device_details[0], device_details[1], device_list):
         while is_continue.lower() != "n" and is_continue.lower() != "y":
@@ -166,7 +176,9 @@ def addDevice(device_details, device_list) -> None:
 
 
 def deleteDevice(device_code, device_list) -> None:
-    """ The function that deletes device name(s) of the specified device code """
+    """
+    The function that deletes device name(s) of the specified device code
+    """
     device_name_list = getDeviceName(device_code, device_list)
 
     if len(device_name_list) == 0:
@@ -199,7 +211,9 @@ def deleteDevice(device_code, device_list) -> None:
 
 
 def updateDevice(device_code, device_list) -> None:
-    """ The function that updates device name(s) of the specified device code """
+    """
+    The function that updates device name(s) of the specified device code
+    """
     device_name_list = getDeviceName(device_code, device_list)
 
     if len(device_name_list) == 0:
@@ -232,7 +246,9 @@ def updateDevice(device_code, device_list) -> None:
 
 
 def searchDevice(keyword, device_list) -> None:
-    """ The function that searches for all devices that matches with the keyword """
+    """
+    The function that searches for all devices that matches with the keyword
+    """
     keyword_ctr = 0
     for idx, device in enumerate(device_list):
         if keyword.lower() in "".join(device).lower():
@@ -244,7 +260,9 @@ def searchDevice(keyword, device_list) -> None:
 
 
 def getDeviceName(device_code, device_list) -> list:
-    """ The function that gets all device names of the specified device code """
+    """
+    The function that gets all device names of the specified device code
+    """
     new_device_name_list = []
     device_ctr = 1
 
@@ -264,14 +282,18 @@ def getDeviceName(device_code, device_list) -> list:
 
 
 def isValidDeviceCode(device_code) -> bool:
-    """ The function that checks if a device code matches with the pattern """
+    """
+    The function that checks if a device code matches with the pattern
+    """
     device_code_pattern = re.compile(r"\d{7}\w{2}")
     result = device_code_pattern.fullmatch(device_code)
     return True if result is not None else False
 
 
 def isDuplicateDevice(device_code, device_name, device_list) -> bool:
-    """ The function that checks if a device record already exists """
+    """
+    The function that checks if a device record already exists
+    """
     has_duplicate = False
     for device in device_list:
         if device_code in device[0] and device_name in device[1]:
@@ -281,7 +303,9 @@ def isDuplicateDevice(device_code, device_name, device_list) -> bool:
 
 
 def readFile(filename) -> list:
-    """ The function that reads content from a file """
+    """
+    The function that reads content from a file
+    """
     try:
         with open(filename, "rb") as file:
             content_list = pickle.load(file)
@@ -295,7 +319,9 @@ def readFile(filename) -> list:
 
 
 def writeFile(content_list, filename) -> bool:
-    """ The function that writes content to a file """
+    """
+    The function that writes content to a file
+    """
     try:
         with open(filename, "wb") as file:
             pickle.dump(content_list, file)
