@@ -23,6 +23,28 @@ class Command(Enum):
     Exit = "6"
 
 
+class fg:
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    CYAN = '\033[36m'
+
+
+class bg:
+    RED = '\033[41m'
+    GREEN = '\033[42m'
+    YELLOW = '\033[43m'
+    BLUE = '\033[44m'
+    CYAN = '\033[46m'
+
+
+class style:
+    BOLD_ITA = '\x1B[1;3m'
+    BOLD = '\x1B[1m'
+    RESET_ALL = '\033[0m'
+
+
 def main():
     """
     The function that starts the applications
@@ -32,16 +54,16 @@ def main():
     if is_login_account:
         startDeviceManagement()
     else:
-        print("Exiting application...")
+        print(bg.RED, style.BOLD + "Exiting application..." + style.RESET_ALL)
 
 
 def loginAccount():
     """
     The function that prompts authorized users to log into the application
     """
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(fg.CYAN + "+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+             Login to Your Account             +")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + style.RESET_ALL)
 
     login_attempt = 0
     is_login_account = False
@@ -60,15 +82,15 @@ def loginAccount():
                     is_login_account = True
                     break
             else:
-                print("Invalid username and/or password\n")
+                print(fg.RED, style.BOLD_ITA + "Invalid username and/or password\n" + style.RESET_ALL)
 
             if is_login_account:
-                print("Log In Successful\n")
+                print(fg.GREEN, style.BOLD_ITA + "Log In Successful\n" + style.RESET_ALL)
                 break
 
             login_attempt += 1
         else:
-            print("You have exceeded three login attempts")
+            print(fg.RED, style.BOLD_ITA + "You have exceeded three login attempts" + style.RESET_ALL)
 
     return is_login_account
 
@@ -77,9 +99,9 @@ def startDeviceManagement():
     """
     The function that displays the application menu
     """
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(fg.CYAN + "+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+    Welcome to the Device Management System    +")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + style.RESET_ALL)
 
     command = None
     while command != Command.Exit.value:
@@ -91,12 +113,12 @@ def startDeviceManagement():
         print("5. Search for a device")
         print("6. Exit the program")
 
-        command = input("\nSelect one option from the list (1, 2, 3, 4, 5 or 6): ")
+        command = input(style.BOLD_ITA + "\nSelect one option from the list (1, 2, 3, 4, 5 or 6): " + style.RESET_ALL).strip()
 
         if command not in [item.value for item in Command]:
             print("Invalid selection. Try again.")
         elif command == Command.Exit.value:
-            print("Thank you for using the application!")
+            print(bg.GREEN, style.BOLD_ITA + "Thank you for using the application!" + style.RESET_ALL)
         else:
             device_list = readFile(devices_filename)
 
@@ -109,36 +131,50 @@ def startDeviceManagement():
                 viewDeviceList(device_list)
 
             elif command == Command.Add.value:
-                print("Note: Device code should consist of 7 numbers and 2 characters")
-                device_details = input("Add device, format [device code] [device name]: ").split(" ", 1)
+                print(bg.YELLOW, style.BOLD_ITA + "Note: Device code should consist of 7 numbers and 2 characters" + style.RESET_ALL)
+                device_details = input(style.BOLD_ITA + "Add device, format [device code] [device name]: " + style.RESET_ALL).split(" ", 1)
 
-                if len(device_details) <= 1:
-                    print("Invalid input. Format: [code] [device name]")
+                # delete from the list all empty string elements after removing leading and trailing whitespaces
+                device_details = list(filter(None, [device.strip() for device in device_details]))
+
+                print(len(device_details))
+                if len(device_details) == 0:
+                    print(fg.RED + "Device code and device name cannot be empty" + style.RESET_ALL)
+                elif len(device_details) == 1:
+                    print(fg.RED + "Missing device name. Format [device code] [device name]" + style.RESET_ALL)
                 elif not isValidDeviceCode(device_details[0]):
-                    print("Invalid device code pattern")
+                    print(fg.RED + "Invalid device code pattern" + style.RESET_ALL)
                 else:
                     addDevice(device_details, device_list)
 
             elif command == Command.Delete.value:
-                device_code = input("Enter code to delete device: ")
-                deleteDevice(device_code, device_list)
+                device_code = input("Enter code to delete device: ").strip()
+
+                if len(device_code) == 0:
+                    print("Device code cannot be empty")
+                else:
+                    deleteDevice(device_code, device_list)
 
             elif command == Command.Update.value:
-                device_code = input("Enter code to update device: ")
-                updateDevice(device_code, device_list)
+                device_code = input("Enter code to update device: ").strip()
+
+                if len(device_code) == 0:
+                    print("Device code cannot be empty")
+                else:
+                    updateDevice(device_code, device_list)
 
             elif command == Command.Search.value:
                 keyword = input("Enter keyword: ")
                 searchDevice(keyword, device_list)
 
             is_continue = ""
-            while is_continue.lower() != "n" and is_continue.lower() != "y":
-                is_continue = input("\nDo you want to continue? [y/n]: ")
-                if is_continue.lower() != "n" and is_continue.lower() != "y":
-                    print("Invalid input. Type 'y' for yes or 'n' for no.")
+            while is_continue != "n" and is_continue != "y":
+                is_continue = input(style.BOLD_ITA + "\nDo you want to continue? [y/n]: " + style.RESET_ALL).strip().lower()
+                if is_continue != "n" and is_continue != "y":
+                    print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + style.RESET_ALL)
             else:
-                if is_continue.lower() == "n":
-                    print("Thank you for using the application!")
+                if is_continue == "n":
+                    print(bg.GREEN, style.BOLD_ITA + "Thank you for using the application!" + style.RESET_ALL)
                     break
 
 
@@ -159,14 +195,14 @@ def addDevice(device_details, device_list):
     """
     is_continue = ""
     if isDuplicateDevice(device_details[0], device_details[1], device_list):
-        while is_continue.lower() != "n" and is_continue.lower() != "y":
-            is_continue = input("Record already exists. Do you want to continue? [y/n]: ")
-            if is_continue.lower() != "n" and is_continue.lower() != "y":
-                print("Invalid input. Type 'y' for yes or 'n' for no.")
+        while is_continue != "n" and is_continue != "y":
+            is_continue = input(fg.RED + "Record already exists. Do you want to continue? [y/n]: " + style.RESET_ALL).strip().lower()
+            if is_continue != "n" and is_continue != "y":
+                print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + style.RESET_ALL)
     else:
         is_continue = "y"
 
-    if is_continue.lower() == "y":
+    if is_continue == "y":
         device_list.append(device_details)
         is_device_added = writeFile(device_list, devices_filename)
         if is_device_added:
@@ -185,9 +221,11 @@ def deleteDevice(device_code, device_list):
         print("Device code", device_code, "is not found")
     else:
         if len(device_name_list) == 1:
-            device_num_list = "1"   # only 1 record found
+            device_num_list = "1"  # only 1 record found
         else:
             device_num_list = input("Enter number to delete device name (comma separated): ").split(",")
+            # delete from the list all empty string elements after removing leading and trailing whitespaces
+            device_num_list = list(filter(None, [device_num.strip() for device_num in device_num_list]))
 
         del_ctr = 0
         for device_num in device_num_list:
@@ -220,9 +258,11 @@ def updateDevice(device_code, device_list):
         print("Device code", device_code, "is not found")
     else:
         if len(device_name_list) == 1:
-            device_num_list = "1"   # only 1 record found
+            device_num_list = "1"  # only 1 record found
         else:
             device_num_list = input("Enter number to update device name (comma separated): ").split(",")
+            # delete from the list all empty string elements after removing leading and trailing whitespaces
+            device_num_list = list(filter(None, [device_num.strip() for device_num in device_num_list]))
 
         for device_num in device_num_list:
             device_num_ctr = 0
@@ -266,14 +306,15 @@ def getDeviceName(device_code, device_list):
     new_device_name_list = []
     device_ctr = 1
 
-    device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list) if device_list[idx][0] == device_code]
+    device_name_list = [[idx, device_list[idx][1]] for idx, device in enumerate(device_list)
+                        if device_list[idx][0] == device_code]
 
     if len(device_name_list) > 1:
         print("Device names using code", device_code)
 
     for idx, device_name in enumerate(device_name_list):
         if len(device_name_list) > 1:
-            print(str(device_ctr)+".", device_name[1])
+            print(str(device_ctr) + ".", device_name[1])
         # list contains: [0] temp ID [1] index from original list [2] device name
         new_device_name_list.append([device_ctr, device_name[0], device_name[1]])
         device_ctr += 1
