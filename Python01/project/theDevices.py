@@ -109,7 +109,7 @@ def startDeviceManagement():
                 viewDeviceList(device_list)
 
             elif command == Command.Add.value:
-                print(bg.CYAN + ef.BOLD_ITA, "Note: Device code should consist of 7 numbers and 2 characters", rs.ALL)
+                print(bg.YELLOW + ef.BOLD_ITA, "Note: Device code should consist of 7 numbers and 2 characters", rs.ALL)
                 device_details = input(ef.BOLD_ITA + "Add device, format [device code] [device name]: " + rs.ALL).split(" ", 1)
 
                 # delete from the list all empty string elements after removing leading and trailing whitespaces
