@@ -8,7 +8,7 @@ Submitted by:
 import pickle
 import re
 from enum import Enum
-import os
+from style import fg, bg, ef, rs
 
 devices_filename = "devices.txt"
 accounts_filename = "accounts"
@@ -23,28 +23,6 @@ class Command(Enum):
     Exit = "6"
 
 
-class fg:
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    CYAN = '\033[36m'
-
-
-class bg:
-    RED = '\033[41m'
-    GREEN = '\033[42m'
-    YELLOW = '\033[43m'
-    BLUE = '\033[44m'
-    CYAN = '\033[46m'
-
-
-class style:
-    BOLD_ITA = '\x1B[1;3m'
-    BOLD = '\x1B[1m'
-    RESET_ALL = '\033[0m'
-
-
 def main():
     """
     The function that starts the applications
@@ -54,7 +32,7 @@ def main():
     if is_login_account:
         startDeviceManagement()
     else:
-        print(bg.RED, style.BOLD + "Exiting application..." + style.RESET_ALL)
+        print(bg.RED, ef.BOLD + "Exiting application..." + rs.ALL)
 
 
 def loginAccount():
@@ -63,7 +41,7 @@ def loginAccount():
     """
     print(fg.CYAN + "+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+             Login to Your Account             +")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + style.RESET_ALL)
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + rs.ALL)
 
     login_attempt = 0
     is_login_account = False
@@ -82,15 +60,15 @@ def loginAccount():
                     is_login_account = True
                     break
             else:
-                print(fg.RED, style.BOLD_ITA + "Invalid username and/or password\n" + style.RESET_ALL)
+                print(fg.RED, ef.BOLD_ITA + "Invalid username and/or password\n" + rs.ALL)
 
             if is_login_account:
-                print(fg.GREEN, style.BOLD_ITA + "Log In Successful\n" + style.RESET_ALL)
+                print(fg.GREEN, ef.BOLD_ITA + "Log In Successful\n" + rs.ALL)
                 break
 
             login_attempt += 1
         else:
-            print(fg.RED, style.BOLD_ITA + "You have exceeded three login attempts" + style.RESET_ALL)
+            print(fg.RED, ef.BOLD_ITA + "You have exceeded three login attempts" + rs.ALL)
 
     return is_login_account
 
@@ -101,7 +79,7 @@ def startDeviceManagement():
     """
     print(fg.CYAN + "+++++++++++++++++++++++++++++++++++++++++++++++++")
     print("+    Welcome to the Device Management System    +")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + style.RESET_ALL)
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++" + rs.ALL)
 
     command = None
     while command != Command.Exit.value:
@@ -113,12 +91,12 @@ def startDeviceManagement():
         print("5. Search for a device")
         print("6. Exit the program")
 
-        command = input(style.BOLD_ITA + "\nSelect one option from the list (1, 2, 3, 4, 5 or 6): " + style.RESET_ALL).strip()
+        command = input(ef.BOLD_ITA + "\nSelect one option from the list (1, 2, 3, 4, 5 or 6): " + rs.ALL).strip()
 
         if command not in [item.value for item in Command]:
             print("Invalid selection. Try again.")
         elif command == Command.Exit.value:
-            print(bg.GREEN, style.BOLD_ITA + "Thank you for using the application!" + style.RESET_ALL)
+            print(bg.GREEN, ef.BOLD_ITA + "Thank you for using the application!" + rs.ALL)
         else:
             device_list = readFile(devices_filename)
 
@@ -131,19 +109,19 @@ def startDeviceManagement():
                 viewDeviceList(device_list)
 
             elif command == Command.Add.value:
-                print(bg.YELLOW, style.BOLD_ITA + "Note: Device code should consist of 7 numbers and 2 characters" + style.RESET_ALL)
-                device_details = input(style.BOLD_ITA + "Add device, format [device code] [device name]: " + style.RESET_ALL).split(" ", 1)
+                print(bg.YELLOW, ef.BOLD_ITA + "Note: Device code should consist of 7 numbers and 2 characters" + rs.ALL)
+                device_details = input(ef.BOLD_ITA + "Add device, format [device code] [device name]: " + rs.ALL).split(" ", 1)
 
                 # delete from the list all empty string elements after removing leading and trailing whitespaces
                 device_details = list(filter(None, [device.strip() for device in device_details]))
 
                 print(len(device_details))
                 if len(device_details) == 0:
-                    print(fg.RED + "Device code and device name cannot be empty" + style.RESET_ALL)
+                    print(fg.RED + "Device code and device name cannot be empty" + rs.ALL)
                 elif len(device_details) == 1:
-                    print(fg.RED + "Missing device name. Format [device code] [device name]" + style.RESET_ALL)
+                    print(fg.RED + "Missing device name. Format [device code] [device name]" + rs.ALL)
                 elif not isValidDeviceCode(device_details[0]):
-                    print(fg.RED + "Invalid device code pattern" + style.RESET_ALL)
+                    print(fg.RED + "Invalid device code pattern" + rs.ALL)
                 else:
                     addDevice(device_details, device_list)
 
@@ -169,12 +147,12 @@ def startDeviceManagement():
 
             is_continue = ""
             while is_continue != "n" and is_continue != "y":
-                is_continue = input(style.BOLD_ITA + "\nDo you want to continue? [y/n]: " + style.RESET_ALL).strip().lower()
+                is_continue = input(ef.BOLD_ITA + "\nDo you want to continue? [y/n]: " + rs.ALL).strip().lower()
                 if is_continue != "n" and is_continue != "y":
-                    print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + style.RESET_ALL)
+                    print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + rs.ALL)
             else:
                 if is_continue == "n":
-                    print(bg.GREEN, style.BOLD_ITA + "Thank you for using the application!" + style.RESET_ALL)
+                    print(bg.GREEN, ef.BOLD_ITA + "Thank you for using the application!" + rs.ALL)
                     break
 
 
@@ -196,9 +174,9 @@ def addDevice(device_details, device_list):
     is_continue = ""
     if isDuplicateDevice(device_details[0], device_details[1], device_list):
         while is_continue != "n" and is_continue != "y":
-            is_continue = input(fg.RED + "Record already exists. Do you want to continue? [y/n]: " + style.RESET_ALL).strip().lower()
+            is_continue = input(fg.RED + "Record already exists. Do you want to continue? [y/n]: " + rs.ALL).strip().lower()
             if is_continue != "n" and is_continue != "y":
-                print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + style.RESET_ALL)
+                print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + rs.ALL)
     else:
         is_continue = "y"
 
