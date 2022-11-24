@@ -32,7 +32,7 @@ def main():
     if is_login_account:
         startDeviceManagement()
     else:
-        print(bg.RED, ef.BOLD + "Exiting application..." + rs.ALL)
+        print(bg.RED + ef.BOLD, "Exiting application...", rs.ALL)
 
 
 def loginAccount():
@@ -96,7 +96,7 @@ def startDeviceManagement():
         if command not in [item.value for item in Command]:
             print("Invalid selection. Try again.")
         elif command == Command.Exit.value:
-            print(bg.GREEN, ef.BOLD_ITA + "Thank you for using the application!" + rs.ALL)
+            print(bg.GREEN + ef.BOLD_ITA, "Thank you for using the application! ", rs.ALL)
         else:
             device_list = readFile(devices_filename)
 
@@ -109,7 +109,7 @@ def startDeviceManagement():
                 viewDeviceList(device_list)
 
             elif command == Command.Add.value:
-                print(bg.YELLOW, ef.BOLD_ITA + "Note: Device code should consist of 7 numbers and 2 characters" + rs.ALL)
+                print(bg.CYAN + ef.BOLD_ITA, "Note: Device code should consist of 7 numbers and 2 characters", rs.ALL)
                 device_details = input(ef.BOLD_ITA + "Add device, format [device code] [device name]: " + rs.ALL).split(" ", 1)
 
                 # delete from the list all empty string elements after removing leading and trailing whitespaces
@@ -152,7 +152,7 @@ def startDeviceManagement():
                     print(fg.RED + "Invalid input. Type 'y' for yes or 'n' for no." + rs.ALL)
             else:
                 if is_continue == "n":
-                    print(bg.GREEN, ef.BOLD_ITA + "Thank you for using the application!" + rs.ALL)
+                    print(bg.GREEN + ef.BOLD_ITA, "Thank you for using the application!", rs.ALL)
                     break
 
 
