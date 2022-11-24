@@ -115,7 +115,6 @@ def startDeviceManagement():
                 # delete from the list all empty string elements after removing leading and trailing whitespaces
                 device_details = list(filter(None, [device.strip() for device in device_details]))
 
-                print(len(device_details))
                 if len(device_details) == 0:
                     print(fg.RED + "Device code and device name cannot be empty" + rs.ALL)
                 elif len(device_details) == 1:
