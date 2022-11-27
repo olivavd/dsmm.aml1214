@@ -104,14 +104,14 @@ def startDeviceManagement():
 
             # If there is an error reading the device file
             if device_list is None:
-                print("Exiting application...")
+                print(f"{bg.RED}{ef.BOLD} Exiting application...")
                 break
 
             if command == Command.View.value:
                 viewDeviceList(device_list)
 
             elif command == Command.Add.value:
-                print(f"{bg.YELLOW + ef.BRIGHT} Note: Device code should consist of 7 numbers and 2 characters ")
+                print(f"{bg.YELLOW}{ef.BRIGHT} Note: Device code should consist of 7 numbers and 2 characters ")
                 device_details = input(f"{ef.BRIGHT}Add device, format [device code] [device name]: ").split(" ", 1)
 
                 # delete from the list all empty string elements after removing leading and trailing whitespaces
@@ -130,7 +130,7 @@ def startDeviceManagement():
                 device_code = input("Enter code to delete device: ").strip()
 
                 if len(device_code) == 0:
-                    print("Device code cannot be empty")
+                    print(f"{fg.RED}Device code cannot be empty")
                 else:
                     deleteDevice(device_code, device_list)
 
@@ -138,12 +138,12 @@ def startDeviceManagement():
                 device_code = input("Enter code to update device: ").strip()
 
                 if len(device_code) == 0:
-                    print("Device code cannot be empty")
+                    print(f"{fg.RED}Device code cannot be empty")
                 else:
                     updateDevice(device_code, device_list)
 
             elif command == Command.Search.value:
-                keyword = input("Enter keyword: ")
+                keyword = input("Enter keyword to search for device: ")
                 searchDevice(keyword, device_list)
 
             is_continue = ""
@@ -166,7 +166,7 @@ def viewDeviceList(device_list):
         for device in device_list:
             print(f"- {device[0]} {device[1]}")
     else:
-        print("No device found")
+        print(f"{fg.RED}No device found")
 
 
 def addDevice(device_details, device_list):
@@ -186,7 +186,7 @@ def addDevice(device_details, device_list):
         device_list.append(device_details)
         is_device_added = writeFile(device_list, devices_filename)
         if is_device_added:
-            print(f"{device_details[0]} {device_details[1]} is added")
+            print(f"{fg.GREEN}{device_details[0]} {device_details[1]} is added")
     else:
         print(f"{device_details[0]} {device_details[1]} is not added")
 
@@ -198,7 +198,7 @@ def deleteDevice(device_code, device_list):
     device_name_list = getDeviceName(device_code, device_list)
 
     if len(device_name_list) == 0:
-        print(f"Device code {device_code} is not found")
+        print(f"{fg.RED}Device code {device_code} is not found")
     else:
         if len(device_name_list) == 1:
             device_num_list = "1"  # only 1 record found
@@ -221,11 +221,11 @@ def deleteDevice(device_code, device_list):
 
                     is_device_deleted = writeFile(device_list, devices_filename)
                     if is_device_deleted:
-                        print(f"{deleted_device[0]} {deleted_device[1]} is deleted")
+                        print(f"{fg.GREEN}{deleted_device[0]} {deleted_device[1]} is deleted")
                     break
 
             if device_num_ctr == 0:
-                print(f"Invalid device name number {device_num}. Skipped..")
+                print(f"{fg.RED}Invalid device name number {device_num}. Skipped..")
 
 
 def updateDevice(device_code, device_list):
@@ -235,7 +235,7 @@ def updateDevice(device_code, device_list):
     device_name_list = getDeviceName(device_code, device_list)
 
     if len(device_name_list) == 0:
-        print(f"Device code {device_code} is not found")
+        print(f"{fg.RED}Device code {device_code} is not found")
     else:
         if len(device_name_list) == 1:
             device_num_list = "1"  # only 1 record found
@@ -258,11 +258,11 @@ def updateDevice(device_code, device_list):
 
                     is_device_updated = writeFile(device_list, devices_filename)
                     if is_device_updated:
-                        print("Device name is updated successfully")
+                        print(f"{fg.GREEN}Device name is updated")
                     break
 
             if device_num_ctr == 0:
-                print(f"Invalid device name number {device_num}. Skipped..")
+                print(f"{fg.RED}Invalid device name number {device_num}. Skipped..")
 
 
 def searchDevice(keyword, device_list):
@@ -276,7 +276,7 @@ def searchDevice(keyword, device_list):
             keyword_ctr += 1
 
     if keyword_ctr == 0:
-        print(f"Keyword {keyword} is not found")
+        print(f"{fg.RED}Keyword {keyword} is not found")
 
 
 def getDeviceName(device_code, device_list):
@@ -333,7 +333,7 @@ def readFile(filename):
     except EOFError:
         content_list = []
     except Exception as err:
-        print(f"Unexpected error: {err}")
+        print(f"{fg.RED}Unexpected error: {err}")
         content_list = None
 
     return content_list
@@ -347,7 +347,7 @@ def writeFile(content_list, filename):
         with open(filename, "wb") as file:
             pickle.dump(content_list, file)
     except Exception as err:
-        print(f"Unexpected error: {err}")
+        print(f"{fg.RED}Unexpected error: {err}")
         return False
 
     return True
