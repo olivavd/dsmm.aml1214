@@ -12,9 +12,7 @@ from colorama import Fore as fg, Back as bg, Style as ef, init
 
 init(autoreset=True)
 
-devices_filename = "devices.txt"
-accounts_filename = "accounts"
-
+DEVICE_FILENAME = "devices.txt"
 
 class Command(Enum):
     View = "1"
@@ -23,7 +21,6 @@ class Command(Enum):
     Update = "4"
     Search = "5"
     Exit = "6"
-
 
 def main():
     """
@@ -36,7 +33,6 @@ def main():
     else:
         print(f"{bg.RED}{ef.BOLD} Exiting application... ")
 
-
 def loginAccount():
     """
     The function that prompts authorized users to log into the application
@@ -47,8 +43,9 @@ def loginAccount():
 
     login_attempt = 0
     is_login_account = False
+    account_filename = "accounts"
 
-    account_list = readFile(accounts_filename)
+    account_list = readFile(account_filename)
 
     # If there are no errors reading the account file
     if account_list is not None:
@@ -73,7 +70,6 @@ def loginAccount():
             print(f"{fg.RED}{ef.BRIGHT}You have exceeded three login attempts")
 
     return is_login_account
-
 
 def startDeviceManagement():
     """
@@ -100,7 +96,7 @@ def startDeviceManagement():
         elif command == Command.Exit.value:
             print(f"\n{bg.GREEN}{ef.BRIGHT} Thank you for using the application! ")
         else:
-            device_list = readFile(devices_filename)
+            device_list = readFile(DEVICE_FILENAME)
 
             # If there is an error reading the device file
             if device_list is None:
@@ -156,7 +152,6 @@ def startDeviceManagement():
                     print(f"\n{bg.GREEN}{ef.BRIGHT} Thank you for using the application! ")
                     break
 
-
 def viewDeviceList(device_list):
     """
     The function that displays device records
@@ -167,7 +162,6 @@ def viewDeviceList(device_list):
             print(f"- {device[0]} {device[1]}")
     else:
         print(f"{fg.RED}No device found")
-
 
 def addDevice(device_details, device_list):
     """
@@ -184,12 +178,11 @@ def addDevice(device_details, device_list):
 
     if is_continue == "y":
         device_list.append(device_details)
-        is_device_added = writeFile(device_list, devices_filename)
+        is_device_added = writeFile(device_list, DEVICE_FILENAME)
         if is_device_added:
             print(f"{fg.GREEN}{device_details[0]} {device_details[1]} is added")
     else:
         print(f"{device_details[0]} {device_details[1]} is not added")
-
 
 def deleteDevice(device_code, device_list):
     """
@@ -219,14 +212,13 @@ def deleteDevice(device_code, device_list):
                     device_num_ctr += 1
                     del_ctr += 1
 
-                    is_device_deleted = writeFile(device_list, devices_filename)
+                    is_device_deleted = writeFile(device_list, DEVICE_FILENAME)
                     if is_device_deleted:
                         print(f"{fg.GREEN}{deleted_device[0]} {deleted_device[1]} is deleted")
                     break
 
             if device_num_ctr == 0:
                 print(f"{fg.RED}Invalid device name number {device_num}. Skipped..")
-
 
 def updateDevice(device_code, device_list):
     """
@@ -256,14 +248,13 @@ def updateDevice(device_code, device_list):
                     device_list[orig_device_idx][1] = new_device_name
                     device_num_ctr += 1
 
-                    is_device_updated = writeFile(device_list, devices_filename)
+                    is_device_updated = writeFile(device_list, DEVICE_FILENAME)
                     if is_device_updated:
                         print(f"{fg.GREEN}Device name is updated")
                     break
 
             if device_num_ctr == 0:
                 print(f"{fg.RED}Invalid device name number {device_num}. Skipped..")
-
 
 def searchDevice(keyword, device_list):
     """
@@ -277,7 +268,6 @@ def searchDevice(keyword, device_list):
 
     if keyword_ctr == 0:
         print(f"{fg.RED}Keyword {keyword} is not found")
-
 
 def getDeviceName(device_code, device_list):
     """
@@ -301,7 +291,6 @@ def getDeviceName(device_code, device_list):
 
     return new_device_name_list
 
-
 def isValidDeviceCode(device_code):
     """
     The function that checks if a device code matches with the pattern
@@ -309,7 +298,6 @@ def isValidDeviceCode(device_code):
     device_code_pattern = re.compile(r"[0-9]{7}[a-zA-Z]{2}")
     result = device_code_pattern.fullmatch(device_code)
     return True if result is not None else False
-
 
 def isDuplicateDevice(device_code, device_name, device_list):
     """
@@ -321,7 +309,6 @@ def isDuplicateDevice(device_code, device_name, device_list):
             has_duplicate = True
             break
     return has_duplicate
-
 
 def readFile(filename):
     """
@@ -338,7 +325,6 @@ def readFile(filename):
 
     return content_list
 
-
 def writeFile(content_list, filename):
     """
     The function that writes content to a file
@@ -351,6 +337,5 @@ def writeFile(content_list, filename):
         return False
 
     return True
-
 
 main()
