@@ -31,7 +31,7 @@ def main():
     if is_login_account:
         startDeviceManagement()
     else:
-        print(f"{bg.RED}{ef.BOLD} Exiting application... ")
+        print(f"{bg.RED} Exiting application... ")
 
 def loginAccount():
     """
@@ -59,7 +59,14 @@ def loginAccount():
                     is_login_account = True
                     break
             else:
-                print(f"{fg.RED}{ef.BRIGHT}Invalid username and/or password\n")
+# Replaced by code below                print(f"{fg.RED}{ef.BRIGHT}Invalid username and/or password\n")
+# Added
+                if login_attempt <= 1:
+                    invalid_login = int(2 - login_attempt)
+                    print(f"{fg.RED}{ef.BRIGHT}Invalid username and/or password. You have {invalid_login} login attempt left.\n")
+                else:
+                    print(f"{fg.RED}{ef.BRIGHT}Invalid username and/or password\n")
+# End of additional command
 
             if is_login_account:
                 print(f"{fg.GREEN}{ef.BRIGHT}Log In Successful\n")
@@ -82,7 +89,7 @@ def startDeviceManagement():
     command = None
     while command != Command.Exit.value:
         print()
-        print("1. View all device")
+        print("1. View all devices")
         print("2. Add a device")
         print("3. Delete a device")
         print("4. Update a device")
@@ -100,7 +107,7 @@ def startDeviceManagement():
 
             # If there is an error reading the device file
             if device_list is None:
-                print(f"{bg.RED}{ef.BOLD} Exiting application...")
+                print(f"{bg.RED} Exiting application...") #print(f"{bg.RED}{ef.BOLD} Exiting application...")
                 break
 
             if command == Command.View.value:
